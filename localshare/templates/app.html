@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} - CONSOLE</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div id="app-container" data-user-id="{{ user.id }}" data-username="{{ user.username }}"
+        data-is-admin="{{ 'true' if user.is_admin else 'false' }}">
+
+        <!-- Header -->
+        <header>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
+                <div class="brand">{{ app_name }} <span class="text-dim mono"
+                        style="font-size: 0.7em; margin-top: 4px;">v2.0</span></div>
+            </div>
+
+            <div class="user-status flex-center" style="gap: 15px;">
+                <div class="hidden-mobile" style="text-align: right; line-height: 1.2;">
+                    <div style="font-size: 0.75rem; color: var(--text-dim);">OPERATOR</div>
+                    <div class="text-accent" style="font-weight: 600;">{{ user.username }}</div>
+                </div>
+                <!-- Simulating a small avatar or status indicator -->
+                <div
+                    style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--accent-dim);">
+                    <span style="color: var(--accent-color); font-size: 18px;">⌁</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Left Navigation -->
+        <aside class="left-panel" id="sidebar">
+            <div
+                style="margin-bottom: 20px; padding-left: 10px; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-dim);">
+                NAVIGATION</div>
+
+            <button class="nav-btn active" onclick="app.navigate('inbox')">
+                <span>🗂️</span> INBOX
+            </button>
+            <button class="nav-btn" onclick="app.navigate('send')">
+                <span>📤</span> SEND FILE
+            </button>
+            <button class="nav-btn" onclick="app.navigate('sent')">
+                <span>📋</span> SENT LOG
+            </button>
+            <button class="nav-btn" onclick="app.navigate('messages')">
+                <span>📨</span> MESSAGES
+            </button>
+
+            {% if user.is_admin %}
+            <div style="border-top: 1px solid rgba(255,255,255,0.05); margin: 10px 0;"></div>
+            <button class="nav-btn" onclick="app.navigate('admin')">
+                <span>🛡️</span> ADMIN
+            </button>
+            {% endif %}
+
+            <div style="flex-grow: 1;"></div>
+
+            <button class="nav-btn" onclick="app.openPasswordModal()">
+                <span>🔑</span> PASSWORD
+            </button>
+
+            <button class="nav-btn" onclick="app.logout()" style="color: var(--error-color);">
+                <span>🔌</span> DISCONNECT
+            </button>
+        </aside>
+
+        <!-- Main Console -->
+        <main id="main-console">
+            <!-- Dynamic Content -->
+            <div id="view-title">SYSTEM READY</div>
+            <div id="view-content"></div>
+        </main>
+
+        <!-- Right Activity Panel -->
+        <aside class="right-panel">
+            <div class="activity-header">ACTIVITY STREAM</div>
+            <ul id="activity-list" class="activity-log">
+                <!-- Logs will be appended here -->
+            </ul>
+        </aside>
+
+        <!-- Footer -->
+        <footer>
+            <span>STATUS: <span class="text-accent">CONNECTED</span></span>
+            <span class="mono">SECURE LINK ESTABLISHED</span>
+        </footer>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="menu-overlay" class="menu-overlay"></div>
+
+    <!-- Password Change Modal -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>CHANGE PASSWORD</span>
+                <button class="close-modal" onclick="app.closePasswordModal()">&times;</button>
+            </div>
+            <form id="change-password-form" onsubmit="event.preventDefault(); app.changePassword(event);">
+                <div style="margin-bottom: 15px;">
+                    <label class="text-dim mono" style="font-size: 0.8rem;">CURRENT PASSWORD</label>
+                    <input type="password" name="old_password" required placeholder="••••••••">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label class="text-dim mono" style="font-size: 0.8rem;">NEW PASSWORD</label>
+                    <input type="password" name="new_password" required placeholder="••••••••">
+                </div>
+                <div id="pwd-msg" class="mono text-dim"
+                    style="font-size: 0.8rem; margin-bottom: 15px; min-height: 1.2em;"></div>
+                <button type="submit" class="primary" style="width: 100%;">UPDATE CREDENTIALS</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+    <script>
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('app-container');
+            window.currentUser = {
+                id: parseInt(container.dataset.userId),
+                username: container.dataset.username,
+                is_admin: container.dataset.isAdmin === 'true'
+            };
+            app.init();
+        });
+    </script>
+</body>
+
+</html>

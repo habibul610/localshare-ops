@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} - ACCESS CONTROL</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="login-container">
+
+        <div class="login-box">
+            <div class="login-header">
+                <h1 class="brand" style="justify-content: center;">{{ app_name }}</h1>
+                <p>SECURE FILE TRANSFER PROTOCOL</p>
+                <div class="blink text-error" style="font-size: 0.8rem; letter-spacing: 2px;">[ RESTRICTED AREA ]</div>
+            </div>
+
+            <form id="login-form" style="margin-top: 30px; display: flex; flex-direction: column; gap: 20px;">
+                <div>
+                    <input type="text" id="username" name="username" placeholder="IDENTIFICATION" required
+                        autocomplete="username" autofocus>
+                </div>
+                <div>
+                    <input type="password" id="password" name="password" placeholder="ACCESS CODE" required
+                        autocomplete="current-password">
+                </div>
+                <button type="submit" class="primary" style="margin-top: 10px; width: 100%;">INITIATE SESSION</button>
+            </form>
+
+            <div id="login-message" class="text-error mono"
+                style="margin-top: 25px; min-height: 20px; font-size: 0.9rem;"></div>
+
+            <div style="margin-top: 40px; font-size: 0.75rem; color: #444;">
+                <p>SYSTEM ID: LOCALHOST::8000</p>
+                <p>ENCRYPTION: STANDARD</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const form = document.getElementById('login-form');
+        const msg = document.getElementById('login-message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = form.querySelector('button');
+            const originalText = btn.innerText;
+
+            btn.disabled = true;
+            btn.innerText = "AUTHENTICATING...";
+            msg.textContent = "";
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    msg.textContent = "ACCESS GRANTED. ESTABLISHING LINK...";
+                    msg.className = "text-accent mono";
+                    setTimeout(() => window.location.href = "/app", 800);
+                } else {
+                    const data = await response.json();
+                    msg.textContent = data.detail || "ACCESS DENIED";
+                    msg.className = "text-error mono";
+                    btn.disabled = false;
+                    btn.innerText = originalText;
+                }
+            } catch (err) {
+                msg.textContent = "CONNECTION FAILURE";
+                msg.className = "text-error mono";
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        });
+    </script>
+</body>
+
+</html>
