@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/LICENSE-MIT-red?style=for-the-badge)
 
 > **"Data sovereignty in your own subnet."**
-> A high-performance, self-hosted operational console for secure file sharing and encrypted messaging within trusted local networks.
+> A high-performance, self-hosted operational console for secure file sharing and encrypted messaging within trusted local networks. Server.log file is only for demo to showcase the log's
 
 ---
 
